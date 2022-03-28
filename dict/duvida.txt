@@ -1,0 +1,2 @@
+eu estou com um pouco de dificuldade para implementar a hash table como array de listas para o open hashing, depois de muito tentar consegui fazer rodar, so que nao tenho total certeza se está certo, o sr poderia conferir essa parte do meu codigo?
+outra duvida é com relaçao ao destructor, apenas o delete [] hash ja seria suficiente?
