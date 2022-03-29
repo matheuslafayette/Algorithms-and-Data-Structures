@@ -4,64 +4,33 @@
 #include <iostream>
 
 template <typename Key, typename T> class Heaptd : public priority_queue<Key, T> {
-
+ 
 private:
-
+ 
     KV<Key, T> *heap;
     int tam;
-
-
+ 
+ 
 public:
-
+ 
     Heaptd(){
-
-        this->heap = new KV<Key, T>[10000]();
+ 
+        this->heap = new KV<Key, T>[101000]();
         this->tam = 0;
     }
-
+ 
     ~Heaptd(){
-
+ 
         delete[] heap;
     }
-
-    void insert(Key key, T value){
-
-        KV<Key, T> aux(key, value);
-        this->heap[++this->tam] = aux;
-
-        int i = this->tam;
-        int k = i;
-
-        while(i > 1 && this->heap[i/2].key() > this->heap[i].key()){
-
-            this->heap[i].set(this->heap[i/2]);
-            i /= 2; 
-        }
-
-        this->heap[i].set(aux);
-
-    }
-
-    T find_max(){
-
-        return this->heap[1].value();
-    }
-
-    T remove_max(){
-
-        if(this->tam == 0)
-            exit(1);
-            
-        T ret = this->heap[1].value();
-
-        this->heap[1].set(this->heap[this->tam]);
-        --this->tam;
+    
+    void heapify(int index){
 
         KV<Key, T> v;
-        v.set(this->heap[1]);
+        v.set(this->heap[index]);
 
         bool heapB = false;
-        int k = 1;
+        int k = index;
         
         while(!heapB && 2*k <= this->tam){
                 
@@ -75,15 +44,46 @@ public:
             
             else{
                 
-                this->heap[k] = this->heap[j];
+                this->heap[k].set(this->heap[j]);
                 k = j;
             }
         }
 
         this->heap[k].set(v);
+    }
+
+    void insert(Key key, T value){
+ 
+        KV<Key, T> aux(key, value);
+        this->heap[++this->tam] = aux;
+ 
+        for(int i = this->tam / 2; i >= 1; i /= 2)
+            this->heapify(i);
+ 
+    }
+ 
+    T find_max(){
+ 
+        return this->heap[1].value();
+    }
+ 
+    T remove_max(){
+ 
+        if(this->tam == 0)
+            return NULL;
+ 
+        T ret = this->heap[1].value();
+ 
+        this->heap[1].set(this->heap[this->tam--]);
+ 
+        this->heapify(1);
     
         return ret;
     }
-
+ 
+    int size(){
+ 
+        return this->tam;
+    }
 };
 #endif
