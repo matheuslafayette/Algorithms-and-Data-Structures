@@ -36,10 +36,10 @@ public:
                 
             int j = 2 * k;
             
-            if(j < this->tam && this->heap[j].key() > this->heap[j+1].key())
+            if(j < this->tam && this->heap[j].key() < this->heap[j+1].key())
                 j++;
             
-            if(v.key() <= this->heap[j].key())
+            if(v.key() >= this->heap[j].key())
                 heapB = true;
             
             else{
@@ -63,7 +63,10 @@ public:
     }
  
     T find_max(){
- 
+        
+        if(this->tam == 0)
+            return NULL;
+            
         return this->heap[1].value();
     }
  
@@ -80,10 +83,19 @@ public:
     
         return ret;
     }
+    
+    void printHeap(){
+
+        for(int i = 1; i <= this->tam; i++) 
+            cout << this->heap[i].value() << " ";
+        
+        cout << endl;
+    }
  
     int size(){
  
         return this->tam;
     }
+ 
 };
 #endif
