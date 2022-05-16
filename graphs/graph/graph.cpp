@@ -1,6 +1,6 @@
 #ifndef GRAPH_CPP
 #define GRAPH_CPP
-#include "./graph.h"
+#include "./../graph.h"
 #include <bits/stdc++.h>
 using namespace std;
 

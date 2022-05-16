@@ -21,7 +21,9 @@ template <typename T> class Graph{
         void dfs(T);
         void topoDfs(T);
         void topoBfs(T);
+        void dijkstra(T);
+        void floyd();
 };
-#include "./graph.cpp"
-#include "./wgraph.cpp"
+#include "./graph/graph.cpp"
+#include "./wgraph/wgraph.cpp"
 #endif

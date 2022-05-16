@@ -1,7 +1,8 @@
 #ifndef WGRAPH_CPP
 #define WGRAPH_CPP
-#include "./graph.h"
+#include "./../graph.h"
 #include <bits/stdc++.h>
+#include "./../disjsubsets/disjsubsets.h"
 using namespace std;
 
 template <typename T> class wgraph : public Graph <T>{
@@ -51,12 +52,16 @@ template <typename T> class wgraph : public Graph <T>{
         void auxdfs(T origem){
 
             this->vis[origem] = true;
-            cout << origem << " ";
+            //cout << origem << " ";
 
             for(auto i = this->adj[origem].begin(); i != this->adj[origem].end(); i++){
                 
-                if(this->vis[(*i).first] == false)
+                if(this->vis[(*i).first] == false){
+
+                    cout << origem << " to " << (*i).first << " with w " << (*i).second << endl;
                     auxdfs((*i).first);
+                }
+                    
             } 
         }
 
@@ -164,12 +169,14 @@ template <typename T> class wgraph : public Graph <T>{
 
         void bfs(T origem){
 
+            this->resetMark();
             this->auxbfs(origem);
             this->resetMark();
         }
 
         void dfs(T origem){
 
+            this->resetMark();
             this->auxdfs(origem);
             cout << endl;
             this->resetMark();
@@ -293,5 +300,92 @@ template <typename T> class wgraph : public Graph <T>{
                     else
                         cout << "dist of " << i << " to " << j << " = " << "none" << endl;
         }
+
+        void prim(){
+
+            vector<int> dist(this->tam, INT_MAX);
+            vector<int> vert(this->tam);
+            resetMark();
+
+            dist[0] = 0;
+
+            priority_queue< pair<pair<int, T>, T>, vector< pair<pair<int, T>, T> >, greater< pair<pair<int, T>, T> > > pq;
+            pq.push({{0, 0}, 0});
+            wgraph<int> graphaux(this->tam);
+
+            while(!pq.empty()){
+
+                int v, w, next;
+
+                w = pq.top().first.first;
+                v = pq.top().first.second;
+                next = pq.top().second;
+
+                graphaux.setEdge(v, next, w);
+                graphaux.setEdge(next, v, w);
+                
+                pq.pop();
+
+                if(w > dist[v] || getMark(v))
+                    continue;
+
+                setMark(v);
+                vert[v] = next;
+
+                for(auto i = adj[v].begin(); i != adj[v].end(); i++){
+
+                    T nextV = (*i).first;
+                    int nextW = (*i).second;
+
+                    if( !getMark(nextV) && dist[nextV] > weight(v, nextV)){
+                        
+                        dist[nextV] = weight(v, nextV);
+                        pq.push({{dist[nextV], nextV}, v});
+                    }
+                }    
+            }
+
+            // for(int i = 0; i < vert.size() - 1; i++){
+
+            //     cout << "vert " << i << " to " << vert[i] << " weight = " << dist[i] << endl;
+            // }   
+            graphaux.dfs(0);     
+
+        }
+
+        void kruskal(){
+            
+            priority_queue< pair<int, pair<T, T>>, vector< pair<int, pair<T, T>> >, greater< pair<int, pair<T, T>> > >pq;
+
+            for(int i = 0; i < this->tam; i++)
+                for(auto j = this->adj[i].begin(); j != this->adj[i].end(); j++)
+                        pq.push({weight(i, (*j).first) , {i, (*j).first} });
+                
+            ds disjs(this->tam);
+            int numMST = this->tam - 1;
+            wgraph<int> graphaux(this->tam);
+
+            while(numMST){
+
+                pair<int, pair<T, T>> aux = pq.top();
+                pq.pop();
+                
+                int weight = aux.first;
+                int a = aux.second.first;
+                int b = aux.second.second;
+
+                if(disjs.find(a) != disjs.find(b)){
+
+                    disjs.join(a, b);
+                    graphaux.setEdge(a, b, weight);
+                    graphaux.setEdge(b, a, weight);
+                    numMST--;
+                }
+
+            }
+
+            graphaux.dfs(0);
+        }
+        
 };
 #endif
